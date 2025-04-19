@@ -1,4 +1,4 @@
-# tutoriel-java (1)
+# tutoriel-java
 
 # 🚀 TUTO COMPLET – LES FONDAMENTAUX DE JAVA
 
