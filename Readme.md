@@ -147,6 +147,19 @@ a.parler(); // "Wouf !"
 | protected | Dans le même package ou sous-classe |
 | (aucun) | Dans le même package uniquement |
 
+Les modificateurs d'accès sont essentiels pour contrôler la visibilité et l'accessibilité des éléments dans votre code
+
+. Voici leur utilité :
+
+- **public** : Accessible depuis n'importe où dans le programme. Utile pour les éléments qui doivent être utilisés par d'autres classes.
+- **private** : Accessible uniquement dans la classe où il est déclaré. Permet d'encapsuler les données et de protéger l'accès direct aux attributs.
+- **protected** : Accessible dans le même package et par les classes qui héritent. Utile pour partager des fonctionnalités entre classes liées tout en les cachant du reste du programme.
+- **default** (sans modificateur) : Accessible uniquement dans le même package. Permet de regrouper des fonctionnalités liées dans un même package.
+
+Une bonne pratique est de toujours définir explicitement ces modificateurs d'accès, car cela permet de mieux contrôler et sécuriser votre code
+
+.
+
 ## 10. 📚 Packages & Imports
 
 ```java
@@ -292,3 +305,130 @@ try {
 - **BufferedReader** : Efficace pour lire des fichiers ligne par ligne
 - **BufferedWriter** : Permet d'écrire dans un fichier avec un buffer
 - **Important** : Toujours fermer les flux (close()) après utilisation
+
+## 15. 🌟 Programmation avancée en détail
+
+### Les Génériques en profondeur
+
+Les génériques sont un concept fondamental en Java qui permet d'écrire du code qui fonctionne avec différents types de données. Imaginons une boîte qui peut contenir n'importe quel type d'objet :
+
+```java
+// Création d'une boîte qui peut contenir n'importe quel type
+public class Boite<T> {
+    private T contenu;
+    
+    public void mettre(T item) {
+        this.contenu = item;
+    }
+    
+    public T recuperer() {
+        return contenu;
+    }
+}
+
+// Utilisation avec différents types
+Boite<String> boiteTexte = new Boite<>();
+boiteTexte.mettre("Hello");
+
+Boite<Integer> boiteNombre = new Boite<>();
+boiteNombre.mettre(42);
+```
+
+Cette approche offre plusieurs avantages :
+
+- ✓ Sécurité du type à la compilation
+- ✓ Réutilisation du code
+- ✓ Évite les conversions explicites (casting)
+
+### Expressions Lambda expliquées
+
+Les expressions lambda sont une façon moderne d'écrire des fonctions anonymes. Elles sont particulièrement utiles pour :
+
+```java
+// Avant Java 8
+button.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        System.out.println("Clic !");
+    }
+});
+
+// Avec Lambda
+button.addActionListener(e -> System.out.println("Clic !"));
+
+// Exemples plus complexes
+List<String> noms = Arrays.asList("Alice", "Bob", "Charlie");
+
+// Tri simple
+noms.sort((a, b) -> a.compareTo(b));
+
+// Filtrage avec predicat
+noms.removeIf(nom -> nom.length() > 5);
+```
+
+### Stream API en détail
+
+L'API Stream offre une approche déclarative pour manipuler les collections. Voici un exemple complet :
+
+```java
+List<Personne> personnes = Arrays.asList(
+    new Personne("Alice", 25),
+    new Personne("Bob", 30),
+    new Personne("Charlie", 35)
+);
+
+// Exemple complet de manipulation
+double ageMoyen = personnes.stream()
+    .filter(p -> p.getAge() > 20)           // Filtre les personnes > 20 ans
+    .map(Personne::getAge)                  // Extrait l'âge
+    .mapToInt(Integer::intValue)            // Convertit en int
+    .average()                              // Calcule la moyenne
+    .orElse(0.0);                          // Valeur par défaut si vide
+
+// Collecte dans une nouvelle structure
+Map<String, Integer> mapPersonnes = personnes.stream()
+    .collect(Collectors.toMap(
+        Personne::getNom,    // Clé
+        Personne::getAge     // Valeur
+    ));
+```
+
+### Optional en pratique
+
+Optional est une solution élégante pour gérer les valeurs potentiellement nulles :
+
+```java
+// Création et utilisation d'Optional
+public class Service {
+    public Optional<Utilisateur> trouverUtilisateur(String id) {
+        Utilisateur user = database.findById(id);
+        return Optional.ofNullable(user);
+    }
+}
+
+// Utilisation
+Service service = new Service();
+service.trouverUtilisateur("123")
+    .filter(u -> u.getAge() > 18)
+    .map(Utilisateur::getNom)
+    .ifPresentOrElse(
+        nom -> System.out.println("Utilisateur trouvé : " + nom),
+        () -> System.out.println("Utilisateur non trouvé")
+    );
+```
+
+Bonnes pratiques pour l'utilisation d'Optional :
+
+- ✓ Ne jamais retourner null pour un Optional
+- ✓ Utiliser orElse() ou orElseGet() pour fournir une valeur par défaut
+- ✓ Éviter Optional.get() sans vérification
+- ✓ Ne pas utiliser Optional comme paramètre de méthode
+
+### Cas d'utilisation pratiques
+
+Ces concepts avancés sont particulièrement utiles dans les scénarios suivants :
+
+- 🔹 Génériques : Collections personnalisées, services génériques, caches
+- 🔹 Lambda : Callbacks, événements, filtrage de données
+- 🔹 Streams : Traitement de grandes collections, analyses de données
+- 🔹 Optional : APIs robustes, traitement des résultats de recherche
